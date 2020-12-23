@@ -81,7 +81,6 @@ impl Thread {
         unsafe {
             nnsdk::os::WaitThread(self.native);
             nnsdk::os::DestroyThread(self.native);
-            drop(Box::from_raw(self.native));
             mem::forget(self);
         }
     }
