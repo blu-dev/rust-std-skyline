@@ -32,9 +32,7 @@ impl Thread {
             // Pretty sure that alignment is 0x1000 and that is the minimum that you can have soooo..
             stack_size = ((STACK_GRANULARITY - (stack_size % STACK_GRANULARITY)) % STACK_GRANULARITY) + stack_size;
         }
-
-        println!("{}", stack_size);
-
+        
         let mut stack_mem: *mut libc::c_void = 0 as *mut libc::c_void;
         libc::posix_memalign(&mut stack_mem, STACK_GRANULARITY, stack_size);
         assert!(stack_mem != 0 as *mut libc::c_void);
@@ -83,6 +81,7 @@ impl Thread {
         unsafe {
             nnsdk::os::WaitThread(self.native);
             nnsdk::os::DestroyThread(self.native);
+            drop(Box::from_raw(self.native));
             mem::forget(self);
         }
     }
